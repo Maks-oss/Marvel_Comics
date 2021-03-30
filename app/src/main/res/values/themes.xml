@@ -1,0 +1,24 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Theme.MarvelComics" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryVariant">@color/primaryLightColor</item>
+        <item name="colorOnSurface">@color/primaryDarkColor</item>
+<!--         <item name="colorOnPrimary">@color/primaryDarkColor</item>-->
+        <!-- Secondary brand color. -->
+
+        <item name="colorSecondary">@color/secondaryDarkColor</item>
+        <item name="colorSecondaryVariant">@color/secondaryLightColor</item>
+        <item name="colorOnSecondary">@color/secondaryLightColor</item>
+<!--        <item name="colorSecondary">@color/primaryDarkColor</item>-->
+<!--        <item name="colorSecondaryVariant">@color/primaryDarkColor</item>-->
+<!--        <item name="colorOnSecondary">@color/primaryDarkColor</item>-->
+        <item name="android:fontFamily">serif</item>
+        <item name="android:textColor">#020202</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+</resources>
