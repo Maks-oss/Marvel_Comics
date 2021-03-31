@@ -1,11 +1,15 @@
 package com.example.marvelcomics.di
 
-import com.example.marvelcomics.lists.adapters.RecyclerAdapter
+import android.content.Context
+import androidx.room.Room
+import com.example.marvelcomics.database.AppDatabase
+import com.example.marvelcomics.database.FavoritesDAO
 import com.example.marvelcomics.retrofit.ComicsService
 import com.example.marvelcomics.retrofit.Common
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -17,8 +21,24 @@ object AppModule {
     fun provideComicsService() :ComicsService{
         return Common.retrofitService
     }
+
+
+    @InstallIn(SingletonComponent::class)
+    @Module
+    class DatabaseModule {
+        @Provides
+        fun provideChannelDao(appDatabase: AppDatabase): FavoritesDAO {
+            return appDatabase.favoriteDao()
+        }
+    }
+
     @Provides
-    fun provideRecyclerAdapter() :RecyclerAdapter{
-        return RecyclerAdapter()
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
+        return Room.databaseBuilder(
+            appContext,
+            AppDatabase::class.java,
+            "Favorites"
+        ).build()
     }
 }

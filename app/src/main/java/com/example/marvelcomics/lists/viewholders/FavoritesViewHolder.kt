@@ -5,11 +5,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.marvelcomics.database.Favorite
 import com.example.marvelcomics.databinding.FavoritesListItemBinding
-import com.example.marvelcomics.lists.adapters.RecyclerAdapter
+import com.example.marvelcomics.lists.adapters.ListAdapter
 
 class FavoritesViewHolder(
     private val favoritesListItemBinding: FavoritesListItemBinding,
-    private val adapter: RecyclerAdapter
+    private val adapter: ListAdapter
 ) :
     RecyclerView.ViewHolder(
         favoritesListItemBinding.root

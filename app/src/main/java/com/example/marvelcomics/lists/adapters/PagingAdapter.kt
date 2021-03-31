@@ -1,6 +1,5 @@
 package com.example.marvelcomics.lists.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
@@ -10,7 +9,7 @@ import com.example.marvelcomics.databinding.ComicsListItemBinding
 import com.example.marvelcomics.lists.viewholders.ComicsViewHolder
 import com.example.marvelcomics.message.ShowMessage
 
-class PagingAdapter : PagingDataAdapter<Result, ComicsViewHolder>(PagingUtil()) {
+class PagingAdapter  : PagingDataAdapter<Result, ComicsViewHolder>(PagingUtil()) {
     override fun onBindViewHolder(holder: ComicsViewHolder, position: Int)  {
         holder.bind(getItem(position)!!)
     }

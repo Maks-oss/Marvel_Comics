@@ -1,7 +1,6 @@
 package com.example.marvelcomics.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import com.example.marvelcomics.addAnimationOnView
 import com.example.marvelcomics.databinding.MainFragmentBinding
 import com.example.marvelcomics.lists.adapters.PagingAdapter
 import com.example.marvelcomics.message.ShowMessage
@@ -17,6 +17,7 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
 
 @AndroidEntryPoint
 class MainFragment : Fragment(), ShowMessage {
@@ -48,28 +49,24 @@ class MainFragment : Fragment(), ShowMessage {
             it.attachView(this)
         }
         recyclerAdapter.addLoadStateListener {
-            if (it.refresh is LoadState.Loading ||
-                it.append is LoadState.Loading
-            )
-                mainFragmentBinding.progressBar2.visibility = View.VISIBLE
-            else {
-                mainFragmentBinding.progressBar2.visibility = View.INVISIBLE
-                val errorState = when {
-                    it.append is LoadState.Error -> it.append as LoadState.Error
-                    it.prepend is LoadState.Error -> it.prepend as LoadState.Error
-                    it.refresh is LoadState.Error -> it.refresh as LoadState.Error
-                    else -> null
-                }
-                errorState?.let {
-                    showMessage("Nothing was found by your request")
-                }
-
+            mainFragmentBinding.progressBar2.isVisible =
+                it.refresh is LoadState.Loading || it.append is LoadState.Loading
+            val errorState = when {
+                it.append is LoadState.Error -> it.append as LoadState.Error
+                it.prepend is LoadState.Error -> it.prepend as LoadState.Error
+                it.refresh is LoadState.Error -> it.refresh as LoadState.Error
+                else -> null
+            }
+            errorState?.let {
+                showMessage("Nothing was found by your request")
             }
         }
-        mainFragmentBinding.recyclerView.adapter = recyclerAdapter
+        mainFragmentBinding.apply {
+            recyclerView.adapter = recyclerAdapter
+            recyclerView.addAnimationOnView(textInputLayout)
+        }
 
     }
-
 
     private fun callFlow() {
         lifecycleScope.launch {

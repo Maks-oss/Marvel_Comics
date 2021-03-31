@@ -1,7 +1,6 @@
 package com.example.marvelcomics.lists.viewholders
 
 import android.R
-import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.marvelcomics.ServiceLocator
@@ -16,6 +15,7 @@ import kotlinx.coroutines.launch
 class ComicsViewHolder(
     private val comicsListItemBinding: ComicsListItemBinding,
     private val message: ShowMessage
+
 ) :
     RecyclerView.ViewHolder(
         comicsListItemBinding.root
