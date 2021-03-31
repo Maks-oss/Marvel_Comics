@@ -1,7 +1,5 @@
 package com.example.marvelcomics.data.datahelper
 
-import com.example.marvelcomics.data.datahelper.ItemXXX
-
 data class Stories(
     val available: Int,
     val collectionURI: String,

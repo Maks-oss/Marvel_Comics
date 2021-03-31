@@ -1,6 +1,19 @@
 package com.example.marvelcomics.ui.favorites
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.marvelcomics.ServiceLocator
+import com.example.marvelcomics.database.Favorite
+import com.example.marvelcomics.scope
+import kotlinx.coroutines.launch
 
-class FavoritesViewModel :ViewModel(){}
+class FavoritesViewModel : ViewModel() {
+    var favorites: MutableLiveData<List<Favorite>> = MutableLiveData()
+
+    init {
+        scope.launch {
+            favorites.postValue(ServiceLocator.provideRepository().getFavorites())
+        }
+    }
+
+}

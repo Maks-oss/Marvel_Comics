@@ -1,7 +1,5 @@
 package com.example.marvelcomics.data.datahelper
 
-import com.example.marvelcomics.data.Result
-
 data class Data(
     val count: Int,
     val limit: Int,

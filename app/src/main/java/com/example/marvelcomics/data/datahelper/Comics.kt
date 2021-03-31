@@ -1,4 +1,4 @@
-package com.example.marvelcomics.data
+package com.example.marvelcomics.data.datahelper
 
 import com.example.marvelcomics.data.datahelper.Data
 
