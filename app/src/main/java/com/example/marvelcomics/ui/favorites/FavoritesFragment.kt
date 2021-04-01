@@ -18,10 +18,9 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FavoritesFragment : Fragment() {
     private lateinit var favoritesFragmentBinding: FavoritesFragmentBinding
-
     private val favoritesViewModel: FavoritesViewModel by viewModels()
-
     private lateinit var favoritesAdapter: ListAdapter
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -33,16 +32,18 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        favoritesAdapter=ListAdapter(favoritesViewModel)
+        favoritesAdapter = ListAdapter {
+            favoritesViewModel.removeItem(it)
+        }
         favoritesViewModel.favorites.observe(viewLifecycleOwner, Observer {
             favoritesAdapter.submitList(it)
         })
         favoritesFragmentBinding.apply {
-            favoritesList.adapter=favoritesAdapter
+            favoritesList.adapter = favoritesAdapter
             favoritesList.addAnimationOnView(favoritesBarLayout)
             favoritesTopBar.setOnMenuItemClickListener {
-                when(it.itemId){
-                    R.id.filter ->{
+                when (it.itemId) {
+                    R.id.filter -> {
                         showPopupMenu(view)
                         true
                     }
@@ -59,13 +60,13 @@ class FavoritesFragment : Fragment() {
         popup.menuInflater.inflate(R.menu.sort_menu, popup.menu)
 
         popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-            when (menuItem.itemId){
+            when (menuItem.itemId) {
                 R.id.ascending -> {
-                    favoritesAdapter.sortInAscending()
+                    favoritesViewModel.sortInAscending(favoritesAdapter.currentList)
                     true
                 }
                 R.id.descending -> {
-                    favoritesAdapter.sortInDescending()
+                    favoritesViewModel.sortInDescending(favoritesAdapter.currentList)
                     true
                 }
 

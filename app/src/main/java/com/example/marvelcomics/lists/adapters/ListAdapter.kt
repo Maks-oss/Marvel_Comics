@@ -5,14 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncDifferConfig
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.example.marvelcomics.database.Favorite
+import com.example.marvelcomics.database.entities.Favorite
 import com.example.marvelcomics.databinding.FavoritesListItemBinding
 import com.example.marvelcomics.lists.viewholders.FavoritesViewHolder
-import com.example.marvelcomics.scope
-import com.example.marvelcomics.ui.favorites.FavoritesViewModel
-import kotlinx.coroutines.launch
 
-class ListAdapter(private val favoritesViewModel: FavoritesViewModel) :
+class ListAdapter(private val delete: (Favorite)->Unit) :
     ListAdapter<Favorite, FavoritesViewHolder>(
         AsyncDifferConfig.Builder<Favorite>(object : DiffUtil.ItemCallback<Favorite>() {
             override fun areItemsTheSame(oldItem: Favorite, newItem: Favorite): Boolean {
@@ -30,32 +27,9 @@ class ListAdapter(private val favoritesViewModel: FavoritesViewModel) :
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ), this
+            ), delete
         )
 
-    fun removeItem(item: Favorite) {
-        scope.launch {
-            favoritesViewModel.favoritesRepository.deleteFavorite(item)
-            favoritesViewModel.favorites.postValue(
-                favoritesViewModel.favoritesRepository.getFavorites()
-            )
-        }
-    }
-    fun sortInDescending() {
-        val list = mutableListOf<Favorite>().also {
-            it.addAll(currentList)
-        }
-        list.sortByDescending { it.id }
-        favoritesViewModel.favorites.value=list
-    }
-
-    fun sortInAscending() {
-        val list = mutableListOf<Favorite>().also {
-            it.addAll(currentList)
-        }
-        list.sortBy { it.id }
-        favoritesViewModel.favorites.value=list
-    }
     override fun onBindViewHolder(holder: FavoritesViewHolder, position: Int) {
         holder.bind(getItem(position))
     }

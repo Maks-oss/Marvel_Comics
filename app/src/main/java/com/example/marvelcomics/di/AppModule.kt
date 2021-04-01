@@ -32,6 +32,7 @@ object AppModule {
         }
     }
 
+
     @Provides
     @Singleton
     fun provideAppDatabase(@ApplicationContext appContext: Context): AppDatabase {
@@ -41,4 +42,5 @@ object AppModule {
             "Favorites"
         ).build()
     }
+
 }

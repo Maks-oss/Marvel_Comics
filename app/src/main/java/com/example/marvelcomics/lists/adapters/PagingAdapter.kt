@@ -7,15 +7,11 @@ import androidx.recyclerview.widget.DiffUtil
 import com.example.marvelcomics.data.datahelper.Result
 import com.example.marvelcomics.databinding.ComicsListItemBinding
 import com.example.marvelcomics.lists.viewholders.ComicsViewHolder
-import com.example.marvelcomics.message.ShowMessage
+import com.example.marvelcomics.ui.search.SearchViewModel
 
-class PagingAdapter  : PagingDataAdapter<Result, ComicsViewHolder>(PagingUtil()) {
+class PagingAdapter(private val searchViewModel: SearchViewModel, private val message:(String)->Unit)  : PagingDataAdapter<Result, ComicsViewHolder>(PagingUtil()) {
     override fun onBindViewHolder(holder: ComicsViewHolder, position: Int)  {
         holder.bind(getItem(position)!!)
-    }
-    private var message:ShowMessage?=null
-    fun attachView(message: ShowMessage){
-        this.message=message
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ComicsViewHolder =
@@ -24,7 +20,7 @@ class PagingAdapter  : PagingDataAdapter<Result, ComicsViewHolder>(PagingUtil())
                 LayoutInflater.from(parent.context),
                 parent,
                 false
-            ),message!!
+            ),searchViewModel,message
         )
 
     companion object{

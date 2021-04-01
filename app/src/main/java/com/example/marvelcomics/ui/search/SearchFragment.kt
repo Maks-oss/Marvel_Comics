@@ -12,7 +12,6 @@ import androidx.paging.LoadState
 import com.example.marvelcomics.addAnimationOnView
 import com.example.marvelcomics.databinding.MainFragmentBinding
 import com.example.marvelcomics.lists.adapters.PagingAdapter
-import com.example.marvelcomics.message.ShowMessage
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -20,10 +19,10 @@ import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class MainFragment : Fragment(), ShowMessage {
+class SearchFragment : Fragment() {
 
     private lateinit var mainFragmentBinding: MainFragmentBinding
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: SearchViewModel by viewModels()
     private lateinit var recyclerAdapter: PagingAdapter
 
     override fun onCreateView(
@@ -45,8 +44,8 @@ class MainFragment : Fragment(), ShowMessage {
     }
 
     private fun setupList() {
-        recyclerAdapter = PagingAdapter().also {
-            it.attachView(this)
+        recyclerAdapter = PagingAdapter(viewModel) {
+            showMessage(it)
         }
         recyclerAdapter.addLoadStateListener {
             mainFragmentBinding.progressBar2.isVisible =
@@ -76,13 +75,11 @@ class MainFragment : Fragment(), ShowMessage {
         }
     }
 
-    override fun showMessage(text: String) {
+    private fun showMessage(text: String) {
         Snackbar.make(
             mainFragmentBinding.root,
             text,
             Snackbar.LENGTH_LONG
         ).show()
     }
-
-
 }
