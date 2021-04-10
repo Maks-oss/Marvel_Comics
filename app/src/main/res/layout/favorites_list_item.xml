@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:clickable="true"
+    android:id="@+id/favorites_root"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     android:focusable="true">
@@ -16,7 +17,6 @@
             android:id="@+id/favorites_image"
             android:layout_width="100dp"
             android:layout_height="100dp"
-
             android:layout_margin="8dp"
             android:background="@drawable/circle"
             android:padding="3dp"

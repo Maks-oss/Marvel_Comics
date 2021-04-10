@@ -3,7 +3,8 @@ package com.example.marvelcomics.di
 import android.content.Context
 import androidx.room.Room
 import com.example.marvelcomics.database.AppDatabase
-import com.example.marvelcomics.database.FavoritesDAO
+import com.example.marvelcomics.database.dao.CreatorsDAO
+import com.example.marvelcomics.database.dao.FavoritesDAO
 import com.example.marvelcomics.retrofit.ComicsService
 import com.example.marvelcomics.retrofit.Common
 import dagger.Module
@@ -30,6 +31,10 @@ object AppModule {
         fun provideChannelDao(appDatabase: AppDatabase): FavoritesDAO {
             return appDatabase.favoriteDao()
         }
+        @Provides
+        fun provideCreatorsDao(appDatabase: AppDatabase): CreatorsDAO {
+            return appDatabase.creatorsDao()
+        }
     }
 
 
@@ -40,7 +45,7 @@ object AppModule {
             appContext,
             AppDatabase::class.java,
             "Favorites"
-        ).build()
+        ).fallbackToDestructiveMigration().build()
     }
 
 }

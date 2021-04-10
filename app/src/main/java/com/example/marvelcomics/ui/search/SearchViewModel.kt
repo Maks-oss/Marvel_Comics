@@ -6,17 +6,22 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.marvelcomics.data.datahelper.Result
+import com.example.marvelcomics.data.datahelper.comics.comics.Result
 import com.example.marvelcomics.database.entities.Favorite
+import com.example.marvelcomics.getCreatorsFromResponseToDao
 import com.example.marvelcomics.lists.pagingsource.PostDataSource
 import com.example.marvelcomics.repository.ComicsRepository
+import com.example.marvelcomics.repository.CreatorsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
 class SearchViewModel @Inject constructor(
-    private val comicsRepository: ComicsRepository
+    private val comicsRepository: ComicsRepository,
+    private val creatorsRepository: CreatorsRepository
 ) : ViewModel() {
     var comicsPagingFlow: Flow<PagingData<Result>>? = null
     fun applyFlow(title: String) {
@@ -27,24 +32,39 @@ class SearchViewModel @Inject constructor(
             )
         }.flow.cachedIn(viewModelScope)
     }
-
-    suspend fun getFavorite(title: String, image: String) =
-        comicsRepository.getFavoriteByTitleAndImage(title, image)
-
-
+    suspend fun getCreatorsResponse(id:Int) = withContext(Dispatchers.Default) {
+        creatorsRepository.getCreators(
+            id
+        )?: emptyList()
+    }
+    suspend fun insertIntoDatabase(
+        favorite: Favorite,item: Result
+    ) {
+        comicsRepository.insertFavorite(favorite)
+        val id = comicsRepository.getFavorite(favorite.comicId).id
+        val creators =
+            getCreatorsFromResponseToDao(
+                item,
+                id,
+                getCreatorsResponse(item.id)!!
+            )
+        creators.forEach {
+            creatorsRepository.insertCreator(it)
+        }
+    }
     suspend fun isFavoriteExist(favorite: Favorite) =
-        comicsRepository.getFavoriteByTitleAndImage(
-            favorite.title,
-            favorite.image
-        ) != null
+        comicsRepository.getFavorite(favorite.comicId) != null
 
-
-    suspend fun insertIntoFavorites(favorite: Favorite) =
-            comicsRepository.insertFavorite(favorite)
-
-
-    suspend fun deleteFromFavorite(favorite: Favorite) =
-            comicsRepository.deleteFavorite(favorite)
-
+    suspend fun deleteFromDatabase(item: Result) {
+        val favorite = comicsRepository.getFavorite(
+            item.id
+        )
+        creatorsRepository.getCreatorsById(favorite.id).forEach {
+           creatorsRepository.deleteCreator(it)
+        }
+        comicsRepository.deleteFavorite(
+            favorite
+        )
+    }
 
 }

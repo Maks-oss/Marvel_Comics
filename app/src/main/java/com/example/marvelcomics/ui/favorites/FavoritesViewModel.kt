@@ -2,7 +2,7 @@ package com.example.marvelcomics.ui.favorites
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.marvelcomics.BaseScope
+import androidx.lifecycle.viewModelScope
 import com.example.marvelcomics.database.entities.Favorite
 import com.example.marvelcomics.repository.ComicsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -11,10 +11,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(private val comicsRepository: ComicsRepository) :
-    ViewModel(),BaseScope {
+    ViewModel() {
     val favorites: MutableLiveData<List<Favorite>> by lazy {
         MutableLiveData<List<Favorite>>().also {
-            scope.launch {
+            viewModelScope.launch {
                 it.postValue(comicsRepository.getFavorites())
             }
         }
@@ -29,7 +29,7 @@ class FavoritesViewModel @Inject constructor(private val comicsRepository: Comic
     }
 
     fun removeItem(item: Favorite) {
-        scope.launch {
+        viewModelScope.launch {
             comicsRepository.deleteFavorite(item)
             favorites.postValue(
                 comicsRepository.getFavorites()
@@ -45,4 +45,6 @@ class FavoritesViewModel @Inject constructor(private val comicsRepository: Comic
         favorites.value = list
     }
 
+    suspend fun getFavoritesAndCreators(item: Favorite) = comicsRepository.getFavoritesAndCreators()
+        .find { it.favorite.comicId == item.comicId }
 }

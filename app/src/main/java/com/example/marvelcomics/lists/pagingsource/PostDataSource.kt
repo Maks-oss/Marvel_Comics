@@ -1,12 +1,9 @@
 package com.example.marvelcomics.lists.pagingsource
 
-import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.example.marvelcomics.data.datahelper.comics.comics.Result
 import com.example.marvelcomics.repository.ComicsRepository
-import com.example.marvelcomics.data.datahelper.Result
-import com.example.marvelcomics.toMain
-import com.google.android.material.snackbar.Snackbar
 
 class PostDataSource(
     private val comicsRepository: ComicsRepository,

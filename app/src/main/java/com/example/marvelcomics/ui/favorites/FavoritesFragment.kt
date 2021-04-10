@@ -10,16 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.example.marvelcomics.R
-import com.example.marvelcomics.addAnimationOnView
 import com.example.marvelcomics.databinding.FavoritesFragmentBinding
-import com.example.marvelcomics.lists.adapters.ListAdapter
+import com.example.marvelcomics.lists.adapters.FavoritesAdapter
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class FavoritesFragment : Fragment() {
     private lateinit var favoritesFragmentBinding: FavoritesFragmentBinding
     private val favoritesViewModel: FavoritesViewModel by viewModels()
-    private lateinit var favoritesAdapter: ListAdapter
+    private lateinit var favoritesAdapter: FavoritesAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -32,7 +31,7 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        favoritesAdapter = ListAdapter {
+        favoritesAdapter = FavoritesAdapter(favoritesViewModel) {
             favoritesViewModel.removeItem(it)
         }
         favoritesViewModel.favorites.observe(viewLifecycleOwner, Observer {
@@ -40,7 +39,6 @@ class FavoritesFragment : Fragment() {
         })
         favoritesFragmentBinding.apply {
             favoritesList.adapter = favoritesAdapter
-            favoritesList.addAnimationOnView(favoritesBarLayout)
             favoritesTopBar.setOnMenuItemClickListener {
                 when (it.itemId) {
                     R.id.filter -> {

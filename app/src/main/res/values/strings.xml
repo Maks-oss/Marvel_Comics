@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">Marvel Comics</string>
     <string name="publication_date">"Publication date: "</string>
-
+    <string name="creators">Creators:</string>
 </resources>

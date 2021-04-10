@@ -1,61 +1,64 @@
 package com.example.marvelcomics.lists.viewholders
 
-import android.R
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.marvelcomics.BaseScope
-import com.example.marvelcomics.data.datahelper.Result
-import com.example.marvelcomics.database.entities.Favorite
+import com.example.marvelcomics.*
+import com.example.marvelcomics.data.datahelper.comics.comics.Result
+import com.example.marvelcomics.database.entities.FavoriteAndCreators
 import com.example.marvelcomics.databinding.ComicsListItemBinding
-import com.example.marvelcomics.toMain
+import com.example.marvelcomics.lists.listeners.FavoritesButtonListener
+import com.example.marvelcomics.ui.search.SearchFragmentDirections
 import com.example.marvelcomics.ui.search.SearchViewModel
 import kotlinx.coroutines.launch
 
 class ComicsViewHolder(
     private val comicsListItemBinding: ComicsListItemBinding,
     private val searchViewModel: SearchViewModel,
-    private val message: (String) -> Unit
+    message: (String) -> Unit
 ) :
     RecyclerView.ViewHolder(
         comicsListItemBinding.root
-    ),BaseScope {
-    private var isClicked = false
-    fun bind(item: Result) {
-        comicsListItemBinding.apply {
-            val image = item.images.first().path.plus(".jpg")
-            val date =
-                "Publication date: " + item.dates.find { it.type == "onsaleDate" }?.date?.substringBefore(
-                    "T"
-                )
+    ), BaseScope {
+    private val favoritesButtonListener: FavoritesButtonListener =
+        FavoritesButtonListener(searchViewModel, message)
+
+
+    fun bind(item: Result) =
+        comicsListItemBinding.apply{
+            favoritesButtonListener.setItem(item)
             Glide.with(root)
-                .load(image)
+                .load(item.getImage())
                 .into(comicsImage)
 
             comicsTitle.text = item.title
-            comicsDate.text = date
-            favoritesButton.setImageResource(R.drawable.btn_star_big_off)
-            favoritesButton.setOnClickListener {
-                isClicked = !isClicked
+            comicsDate.text = item.getDate()
+            favoritesButton.setFavoritesImage(favoritesButtonListener.getState())
+
+            comicsImage.transitionName = item.getImage()
+            comicsRoot.setOnClickListener {
+                val extras = FragmentNavigatorExtras(
+                    comicsImage to item.getImage()
+                )
                 scope.launch {
-                    if (isClicked) {
-                        val favorite =
-                            Favorite(
-                                title = item.title,
-                                image = image
-                            )
-                        if (searchViewModel.isFavoriteExist(favorite)) {
-                            toMain { message("The comic is already in the favorites") }
-                        } else {
-                            toMain { favoritesButton.setImageResource(R.drawable.btn_star_big_on) }
-                            searchViewModel.insertIntoFavorites(favorite)
-                        }
-                    } else {
-                        toMain { favoritesButton.setImageResource(R.drawable.btn_star_big_off) }
-                        searchViewModel.deleteFromFavorite(searchViewModel.getFavorite(item.title, image))
-                    }
+                    val favorite= getFavoriteFromResponseToDao(item)
+                    val creators = getCreatorsFromResponseToDao(
+                        item,
+                        favorite.id,
+                        searchViewModel.getCreatorsResponse(item.id)
+                    )
+                    val action = SearchFragmentDirections.actionMainFragmentToDetailFragment(
+                        favoritesButtonListener.getState(),
+                        FavoriteAndCreators(favorite,creators)
+                    )
+                    toMain { it.findNavController().navigate(action, extras) }
                 }
+
             }
+            favoritesButton.setOnClickListener(favoritesButtonListener)
+
         }
-    }
+
 
 }

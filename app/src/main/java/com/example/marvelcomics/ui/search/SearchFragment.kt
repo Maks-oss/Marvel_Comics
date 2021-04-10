@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import com.example.marvelcomics.addAnimationOnView
 import com.example.marvelcomics.databinding.MainFragmentBinding
-import com.example.marvelcomics.lists.adapters.PagingAdapter
+import com.example.marvelcomics.lists.adapters.ComicsAdapter
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -23,7 +23,7 @@ class SearchFragment : Fragment() {
 
     private lateinit var mainFragmentBinding: MainFragmentBinding
     private val viewModel: SearchViewModel by viewModels()
-    private lateinit var recyclerAdapter: PagingAdapter
+    private lateinit var recyclerAdapter: ComicsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -44,7 +44,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun setupList() {
-        recyclerAdapter = PagingAdapter(viewModel) {
+        recyclerAdapter = ComicsAdapter(viewModel) {
             showMessage(it)
         }
         recyclerAdapter.addLoadStateListener {
