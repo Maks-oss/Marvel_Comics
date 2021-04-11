@@ -17,7 +17,6 @@ import com.example.marvelcomics.databinding.FavoritesDetailBinding
 import com.example.marvelcomics.lists.adapters.DetailAdapter
 import com.example.marvelcomics.lists.listeners.FavoritesButtonListener
 import com.example.marvelcomics.setFavoritesImage
-import com.example.marvelcomics.ui.favorites.FavoritesViewModel
 import com.example.marvelcomics.ui.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,7 +28,8 @@ class DetailFragment : Fragment() {
 
     private val detailViewModel: DetailViewModel by viewModels()
     private val searchViewModel: SearchViewModel by viewModels()
-    private val favoritesViewModel: FavoritesViewModel by viewModels()
+    private lateinit var favoritesButtonListener: FavoritesButtonListener
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +42,10 @@ class DetailFragment : Fragment() {
         return detailFragmentBinding.root
     }
 
-
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("state",favoritesButtonListener.isClicked)
+    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val value = args.favoriteAndCreators
         detailAdapter = DetailAdapter()
@@ -52,7 +55,6 @@ class DetailFragment : Fragment() {
                 detailAdapter.submitList(it)
             })
         }
-
         detailFragmentBinding.apply {
             value?.favorite?.apply {
                 detailImage.transitionName = image
@@ -61,19 +63,21 @@ class DetailFragment : Fragment() {
                 GlideApp.with(requireContext()).load(image).placeholder(R.drawable.crop_php)
                     .transition(DrawableTransitionOptions.withCrossFade()).into(detailImage)
             }
-            detailFavoritesButton.setFavoritesImage(args.state)
-            val favoritesButtonListener =
+            favoritesButtonListener =
                 FavoritesButtonListener(searchViewModel).also {
-                    it.isClicked = args.state
+                    it.isClicked = savedInstanceState?.getBoolean("state")?:args.state
                     it.item = value
                 }
-            detailFavoritesButton.setOnClickListener(favoritesButtonListener)
+            detailFavoritesButton.apply {
+                setFavoritesImage(favoritesButtonListener.isClicked)
+                setOnClickListener(favoritesButtonListener)
+            }
+
             creatorsList.apply {
                 layoutManager =
                     LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
                 adapter = detailAdapter
             }
-
 
         }
 

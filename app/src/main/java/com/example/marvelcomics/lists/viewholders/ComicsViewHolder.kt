@@ -35,18 +35,10 @@ class ComicsViewHolder(
 
             comicsTitle.text = item.title
             comicsDate.text = item.getDate()
-            favoritesButton.setFavoritesImage(favoritesButtonListener.isClicked)
+            favoritesButton.setFavoritesImage(false)
 
             comicsImage.transitionName = item.getImage()
-//            scope.launch {
-//                favoritesButtonListener.item = FavoriteAndCreators(
-//                    getFavoriteFromResponseToDao(item), getCreatorsFromResponseToDao(
-//                        item,
-//                        item.id,
-//                        searchViewModel.getCreatorsResponse(item.id)
-//                    )
-//                )
-//            }
+
             favoritesButtonListener.applyItem(item)
             comicsRoot.setOnClickListener {
                 val extras = FragmentNavigatorExtras(
