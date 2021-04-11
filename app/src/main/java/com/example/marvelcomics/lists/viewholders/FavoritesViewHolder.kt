@@ -3,9 +3,10 @@ package com.example.marvelcomics.lists.viewholders
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.example.marvelcomics.BaseScope
+import com.example.marvelcomics.GlideApp
 import com.example.marvelcomics.database.entities.Favorite
 import com.example.marvelcomics.databinding.FavoritesListItemBinding
 import com.example.marvelcomics.toMain
@@ -16,29 +17,30 @@ import kotlinx.coroutines.launch
 class FavoritesViewHolder(
     private val favoritesListItemBinding: FavoritesListItemBinding,
     private val favoritesViewModel: FavoritesViewModel,
-    private val delete: (Favorite)-> Unit
+    private val delete: (Favorite) -> Unit
 ) :
     RecyclerView.ViewHolder(
         favoritesListItemBinding.root
-    ),BaseScope {
+    ), BaseScope {
 
     fun bind(item: Favorite) =
         favoritesListItemBinding.apply {
-            Glide.with(root)
+            GlideApp.with(root)
                 .load(item.image)
-                .apply(RequestOptions.circleCropTransform())
+                .apply(RequestOptions.circleCropTransform()).transition(DrawableTransitionOptions.withCrossFade())
                 .into(favoritesImage)
             favoritesTitle.text = item.title
-            favoritesImage.transitionName=item.image
+            favoritesImage.transitionName = item.image
             favoritesRoot.setOnClickListener {
                 val extras = FragmentNavigatorExtras(
                     favoritesImage to item.image
                 )
                 scope.launch {
-                    val action = FavoritesFragmentDirections.actionFavoritesFragmentToDetailFragment(
-                        true,
-                        favoritesViewModel.getFavoritesAndCreators(item)
-                    )
+                    val action =
+                        FavoritesFragmentDirections.actionFavoritesFragmentToDetailFragment(
+                            true,
+                            favoritesViewModel.getFavoritesAndCreators(item)
+                        )
                     toMain { it.findNavController().navigate(action, extras) }
                 }
             }

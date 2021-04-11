@@ -3,7 +3,7 @@ package com.example.marvelcomics.lists.viewholders
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.marvelcomics.*
 import com.example.marvelcomics.data.datahelper.comics.comics.Result
 import com.example.marvelcomics.database.entities.FavoriteAndCreators
@@ -26,10 +26,10 @@ class ComicsViewHolder(
 
 
     fun bind(item: Result) =
-        comicsListItemBinding.apply{
+        comicsListItemBinding.apply {
             favoritesButtonListener.setItem(item)
-            Glide.with(root)
-                .load(item.getImage())
+            GlideApp.with(root)
+                .load(item.getImage()).transition(DrawableTransitionOptions.withCrossFade())
                 .into(comicsImage)
 
             comicsTitle.text = item.title
@@ -42,7 +42,7 @@ class ComicsViewHolder(
                     comicsImage to item.getImage()
                 )
                 scope.launch {
-                    val favorite= getFavoriteFromResponseToDao(item)
+                    val favorite = getFavoriteFromResponseToDao(item)
                     val creators = getCreatorsFromResponseToDao(
                         item,
                         favorite.id,
@@ -50,7 +50,7 @@ class ComicsViewHolder(
                     )
                     val action = SearchFragmentDirections.actionMainFragmentToDetailFragment(
                         favoritesButtonListener.getState(),
-                        FavoriteAndCreators(favorite,creators)
+                        FavoriteAndCreators(favorite, creators)
                     )
                     toMain { it.findNavController().navigate(action, extras) }
                 }

@@ -10,12 +10,12 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.example.marvelcomics.GlideApp
 import com.example.marvelcomics.databinding.FavoritesDetailBinding
 import com.example.marvelcomics.lists.adapters.DetailAdapter
 import com.example.marvelcomics.setFavoritesImage
+
 
 class DetailFragment : Fragment() {
     private lateinit var detailFragmentBinding: FavoritesDetailBinding
@@ -34,6 +34,7 @@ class DetailFragment : Fragment() {
         return detailFragmentBinding.root
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val value = args.favoriteAndCreators
         detailAdapter = DetailAdapter()
@@ -46,15 +47,8 @@ class DetailFragment : Fragment() {
                 detailImage.transitionName = image
                 detailTitle.text = title
                 detailPublicationDate.text = publicationDate
-                val circularProgressDrawable = CircularProgressDrawable(view.context).apply {
-                    strokeWidth = 5f
-                    centerRadius = 30f
-                    start()
-                }
 
-                Glide.with(requireContext()).load(image).apply(RequestOptions.centerCropTransform())/*.placeholder(
-                    circularProgressDrawable
-                )*/.into(detailImage)
+                GlideApp.with(requireContext()).load(image).transition(DrawableTransitionOptions.withCrossFade()).into(detailImage)
             }
             detailFavoritesButton.setFavoritesImage(args.state)
             creatorsList.layoutManager =

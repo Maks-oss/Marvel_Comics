@@ -6,6 +6,8 @@ import android.animation.AnimatorListenerAdapter
 import android.view.View
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.annotation.GlideModule
+import com.bumptech.glide.module.AppGlideModule
 import com.example.marvelcomics.data.datahelper.comics.comics.Result
 import com.example.marvelcomics.database.entities.Creator
 import com.example.marvelcomics.database.entities.Favorite
@@ -17,6 +19,9 @@ import com.example.marvelcomics.data.datahelper.comics.creators.Result as Creato
 const val API_KEY = "5775c95c495d376e3747cd1199772bd4"
 const val HASH = "7cdc7f2b3bad9a8ced7a59368f96b6d6"
 const val TS = "1"
+
+@GlideModule
+class GlideObject: AppGlideModule()
 
 private fun animateView(view: View, translation: Float, alpha: Float, visibility: Int) =
     view.animate().translationY(translation).alpha(alpha)
