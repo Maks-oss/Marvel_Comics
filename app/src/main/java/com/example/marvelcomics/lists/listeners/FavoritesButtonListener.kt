@@ -2,43 +2,43 @@ package com.example.marvelcomics.lists.listeners
 
 import android.view.View
 import android.widget.ImageButton
-import com.example.marvelcomics.BaseScope
+import com.example.marvelcomics.*
 import com.example.marvelcomics.data.datahelper.comics.comics.Result
-import com.example.marvelcomics.getFavoriteFromResponseToDao
-import com.example.marvelcomics.setFavoritesImage
-import com.example.marvelcomics.toMain
+import com.example.marvelcomics.database.entities.FavoriteAndCreators
 import com.example.marvelcomics.ui.search.SearchViewModel
 import kotlinx.coroutines.launch
 
 class FavoritesButtonListener(
     private val searchViewModel: SearchViewModel,
-    private val message: ((String) -> Unit)?
+    private val message: ((String) -> Unit)? = null
 ) : View.OnClickListener, BaseScope {
-    private var isClicked = false
-    private var item: Result? = null
+    var isClicked = false
+    var item: FavoriteAndCreators? = null
 
-
-    fun setItem(item: Result) {
-        this.item = item
+    fun applyItem(res:Result)=scope.launch {
+        item = FavoriteAndCreators(
+            getFavoriteFromResponseToDao(res), getCreatorsFromResponseToDao(
+                res,
+                res.id,
+                searchViewModel.getCreatorsResponse(res.id)
+            )
+        )
     }
 
-    fun getState() = isClicked
 
     override fun onClick(v: View?) {
         isClicked = !isClicked
         scope.launch {
             if (isClicked) {
-                val favorite =
-                    getFavoriteFromResponseToDao(item!!)
-                if (searchViewModel.isFavoriteExist(favorite)) {
+                if (searchViewModel.isFavoriteExist(item!!.favorite)) {
                     toMain { message!!("The comic is already in the favorites") }
                 } else {
                     toMain { (v as ImageButton).setFavoritesImage(isClicked) }
-                    searchViewModel.insertIntoDatabase(favorite, item!!)
+                    searchViewModel.insertIntoDatabase(item!!)
                 }
             } else {
                 toMain { (v as ImageButton).setFavoritesImage(isClicked) }
-                searchViewModel.deleteFromDatabase(item!!)
+                searchViewModel.deleteFromDatabase(item!!.favorite)
             }
         }
     }

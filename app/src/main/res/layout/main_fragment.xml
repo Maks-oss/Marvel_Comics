@@ -17,7 +17,7 @@
         android:layout_margin="5dp"
 
         android:layout_marginTop="8dp"
-        app:endIconDrawable="@android:drawable/ic_input_add"
+        app:endIconDrawable="@drawable/search_24px"
         app:endIconMode="custom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

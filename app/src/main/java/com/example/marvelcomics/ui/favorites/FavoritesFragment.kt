@@ -31,6 +31,7 @@ class FavoritesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        favoritesViewModel.applyLiveData()
         favoritesAdapter = FavoritesAdapter(favoritesViewModel) {
             favoritesViewModel.removeItem(it)
         }

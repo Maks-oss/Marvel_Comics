@@ -11,5 +11,5 @@ data class Creator (
     val creatorFullName:String,
     val creatorImage:String,
     val creatorJob:String,
-    val comicId:Int,
+    var comicId:Int,
 ):Serializable

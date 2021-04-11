@@ -8,7 +8,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.marvelcomics.data.datahelper.comics.comics.Result
 import com.example.marvelcomics.database.entities.Favorite
-import com.example.marvelcomics.getCreatorsFromResponseToDao
+import com.example.marvelcomics.database.entities.FavoriteAndCreators
 import com.example.marvelcomics.lists.pagingsource.PostDataSource
 import com.example.marvelcomics.repository.ComicsRepository
 import com.example.marvelcomics.repository.CreatorsRepository
@@ -38,26 +38,24 @@ class SearchViewModel @Inject constructor(
         )?: emptyList()
     }
     suspend fun insertIntoDatabase(
-        favorite: Favorite,item: Result
+        favoriteAndCreators: FavoriteAndCreators
     ) {
-        comicsRepository.insertFavorite(favorite)
-        val id = comicsRepository.getFavorite(favorite.comicId).id
-        val creators =
-            getCreatorsFromResponseToDao(
-                item,
-                id,
-                getCreatorsResponse(item.id)!!
-            )
-        creators.forEach {
-            creatorsRepository.insertCreator(it)
+        favoriteAndCreators.apply {
+            comicsRepository.insertFavorite(favorite)
+            val id = comicsRepository.getFavorite(favorite.comicId).id
+            creators.forEach {
+                it.comicId=id
+                creatorsRepository.insertCreator(it)
+            }
         }
+
     }
     suspend fun isFavoriteExist(favorite: Favorite) =
         comicsRepository.getFavorite(favorite.comicId) != null
 
-    suspend fun deleteFromDatabase(item: Result) {
+    suspend fun deleteFromDatabase(item: Favorite) {
         val favorite = comicsRepository.getFavorite(
-            item.id
+            item.comicId
         )
         creatorsRepository.getCreatorsById(favorite.id).forEach {
            creatorsRepository.deleteCreator(it)
